@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>You're Invited: Picnic Day!</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" href="data:,">
+</head>
+<body class="bg-gradient-to-br from-green-200 to-blue-100 min-h-screen flex items-center justify-center p-4">
+  <div class="bg-white shadow-xl rounded-2xl p-6 text-center w-full max-w-md animate-pulse" id="form-card">
+    <h1 class="text-3xl md:text-4xl font-bold text-green-700 mb-4 animate-bounce">🌞 Picnic Day!</h1>
+    <p class="text-base md:text-lg text-gray-700 mb-4">
+      You're invited to a sunny day of food, fun, and laughter.
+    </p>
+    <div class="my-4">
+      <p class="text-lg font-semibold">📅 Wednesday, July 02</p>
+      <p class="text-sm text-gray-600">🕒 4:00 PM - 6:00 PM</p>
+      <p class="text-sm text-gray-600">📍 To be disclosed</p>
+    </div>
+    <p class="text-sm text-gray-500 italic mb-2">Bring your laptop and your appetite!</p>
+    <i class="text-sm text-green-700">P.S. you can work here.</i>
+
+    <form 
+      action="https://script.google.com/macros/s/AKfycbyluQTg_mHR8uQFLwp3JBnTQZgS6h3u3PzTGox1ig2mi20rIPUuxnzSgVn_tP0-5O05/exec"
+      method="POST" 
+      class="flex flex-col gap-4 items-center mt-6 w-full"
+      id="rsvp-form"
+      onsubmit="return handleFormSubmit(event);"
+    >
+      <input type="hidden" id="rsvp-lynda" name="RSVP Lynda" value="" />
+      <input type="hidden" id="rsvp-mylo" name="RSVP Mylo" value="" />
+
+      <div class="flex flex-col md:flex-row items-center justify-center gap-6 w-full">
+        <p class="text-sm">Lynda's RSVP</p>
+        <button type="button" onclick="selectRSVP('lynda','YES')" class="bg-green-600 text-white px-6 py-2 rounded-full hover:bg-green-700 transition-transform hover:scale-105">
+          YES
+        </button>
+        <div id="btn-wrapper-lynda" class="relative h-16 w-32 flex items-center justify-center">
+          <button type="button" id="no-btn-lynda" onclick="selectRSVP('lynda','NO')" class="bg-red-500 text-white px-6 py-2 rounded-full absolute no-btn-move z-20">
+            NO
+          </button>
+        </div>
+      </div>
+
+      <div class="flex flex-col md:flex-row items-center justify-center gap-6 w-full">
+        <p class="text-sm">Mylo's RSVP</p>
+        <button type="button" onclick="selectRSVP('mylo','YES')" class="bg-green-600 text-white px-6 py-2 rounded-full hover:bg-green-700 transition-transform hover:scale-105">
+          YES
+        </button>
+        <div id="btn-wrapper-mylo" class="relative h-16 w-32 flex items-center justify-center">
+          <button type="button" id="no-btn-mylo" onclick="selectRSVP('mylo','NO')" class="bg-red-500 text-white px-6 py-2 rounded-full absolute no-btn-move z-20">
+            NO
+          </button>
+        </div>
+      </div>
+
+      <textarea name="Message" rows="3" placeholder="AM I STILL YOUR BABY ?" class="w-full mt-4 p-2 rounded border border-gray-300"></textarea>
+      <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-full hover:bg-blue-700 transition-transform hover:scale-105 mt-2">
+        Submit RSVP
+      </button>
+    </form>
+
+    <div id="success-message" class="hidden mt-6 text-green-700 text-center bg-green-100 p-4 rounded-xl shadow-inner">
+      ✅ Thank you! Your RSVP has been submitted.
+    </div>
+
+    <div class="mt-8">
+      <img
+        src="zuma Small.jpeg"
+        alt="Picnic"
+        class="w-full rounded-xl shadow-lg animate-[float_3s_ease-in-out_infinite]"
+      />
+    </div>
+  </div>
+
+  <script>
+    function setupNoBtn(wrapperId, btnId) {
+      const wrapper = document.getElementById(wrapperId);
+      const noBtn = document.getElementById(btnId);
+
+      function moveButton() {
+        const maxX = wrapper.clientWidth - noBtn.clientWidth;
+        const maxY = wrapper.clientHeight - noBtn.clientHeight;
+        const randX = Math.random() * maxX;
+        const randY = Math.random() * maxY;
+        noBtn.style.transform = `translate(${randX}px, ${randY}px)`;
+      }
+
+      noBtn.addEventListener('mouseenter', moveButton);
+      noBtn.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        moveButton();
+      });
+    }
+
+    setupNoBtn('btn-wrapper-lynda', 'no-btn-lynda');
+    setupNoBtn('btn-wrapper-mylo', 'no-btn-mylo');
+
+    function selectRSVP(person, value) {
+      if (person === 'lynda') {
+        document.getElementById('rsvp-lynda').value = value;
+      } else if (person === 'mylo') {
+        document.getElementById('rsvp-mylo').value = value;
+      }
+    }
+
+    function handleFormSubmit(e) {
+      e.preventDefault();
+
+      const lynda = document.getElementById('rsvp-lynda').value;
+      const mylo = document.getElementById('rsvp-mylo').value;
+      if (!lynda && !mylo) {
+        alert('Please RSVP for Lynda or Mylo before submitting.');
+        return false;
+      }
+
+      const form = document.getElementById('rsvp-form');
+      const formData = new FormData(form);
+
+      fetch(form.action, {
+        method: 'POST',
+        body: formData
+      })
+      .then(() => {
+        form.reset();
+        document.getElementById('form-card').classList.remove('animate-pulse');
+        document.getElementById('rsvp-form').classList.add('hidden');
+        document.getElementById('success-message').classList.remove('hidden');
+      })
+      .catch(() => {
+        alert("There was a problem submitting your RSVP.");
+      });
+
+      return false;
+    }
+  </script>
+</body>
+</html>
